@@ -16,7 +16,6 @@ func Logger(proximaFunc http.HandlerFunc) http.HandlerFunc {
 
 func Autenticar(proximaFunc http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("Validando...")
 		if erro := autenticacao.ValidarToken(r); erro != nil {
 			respostas.Erro(w, http.StatusUnauthorized, erro)
 			return
