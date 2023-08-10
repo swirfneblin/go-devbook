@@ -1,44 +1,57 @@
-version: "3.3"
+version: "3.8"
 services:
-  # db:
-  #   platform: linux/x86_64
-  #   container_name: db
-  #   image: mysql:5.7
-  #   command: --default-authentication-plugin=mysql_native_password
-  #   restart: always
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: root
-  #     MYSQL_DATABASE: db
-  #     MYSQL_USER: user
-  #     MYSQL_PASSWORD: password
-  #   ports:
-  #     - 3306:3306
-  #   volumes:
-  #     - my-dbvolume:/var/lib/mysql
-  #   expose:
-  #     - 3306
-  # db_seeder:
-  #   image: mysql:5.7
-  #   volumes:
-  #     - ./sql/init.sql:/init.sql
-  #   environment:
-  #     MYSQL_ALLOW_EMPTY_PASSWORD: "true"
-  #   entrypoint:
-  #     [
-  #       "bash",
-  #       "-c",
-  #       "sleep 5 && mysql --user=root -proot --host=db --port=3306 < init.sql && exit",
-  #     ]
-  #   depends_on:
-  #     - db
+  db:
+    platform: linux/x86_64
+    container_name: db
+    image: mysql:5.7
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - 3306:3306
+    volumes:
+      - my-dbvolume:/var/lib/mysql
+    expose:
+      - 3306
+    networks:
+      - network
+  db_seeder:
+    image: mysql:5.7
+    volumes:
+      - ./sql/init.sql:/init.sql
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "true"
+    entrypoint:
+      [
+        "bash",
+        "-c",
+        "sleep 5 && mysql --user=root -proot --host=db --port=3306 < init.sql && exit",
+      ]
+    depends_on:
+      - db
+    networks:
+      - network
   app:
     platform: linux/x86_64
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: app
     # restart: always
-    # depends_on:
-    #   - db
+    volumes:
+      - ./app:/app
+    command: go run main.go
+    depends_on:
+      - db
     ports:
       - 5000:5000
+    networks:
+      - network
 volumes:
   my-dbvolume:
+networks:
+  network:
