@@ -5,7 +5,8 @@ COPY ./app /go/src/app
 RUN go build -o myapp
 
 # Stage 2: Create a minimal runtime image
-FROM arm64v8/alpine:latest
+FROM arm64v8/alpine:buster
 WORKDIR /app
 COPY --from=builder /go/src/app/myapp /app/
-CMD ["./myapp"]
+# CMD ["./myapp"]
+CMD ["tail", "-f", "/dev/null"]
