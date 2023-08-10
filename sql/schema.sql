@@ -3,6 +3,8 @@ CREATE DATABASE IF NOT EXISTS `devbook` DEFAULT CHARACTER SET utf8 COLLATE utf8_
 USE `devbook`;
 
 DROP TABLE IF EXISTS `usuarios`;
+DROP TABLE IF EXISTS `seguidores`;
+DROP TABLE IF EXISTS `publicacoes`;
 
 CREATE TABLE usuarios(
   id int AUTO_INCREMENT primary key,
@@ -24,5 +26,19 @@ CREATE TABLE seguidores(
   REFERENCES usuarios(id)
   ON DELETE CASCADE,
   PRIMARY KEY (usuario_id, seguidor_id)
+) ENGINE=InnoDB;
+
+
+CREATE TABLE publicacoes(
+  id int AUTO_INCREMENT primary key,
+  titulo varchar(50) NOT NULL,
+  conteudo varchar(300)  NOT NULL,
+  autor_id int NOT NULL,
+  FOREIGN KEY (autor_id)
+  REFERENCES usuarios(id)
+  ON DELETE CASCADE,
+
+  curtidas int default 0,
+  criadaEm timestamp default current_timestamp()
 ) ENGINE=InnoDB;
   
